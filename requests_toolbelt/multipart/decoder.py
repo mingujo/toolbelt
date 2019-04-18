@@ -55,7 +55,11 @@ class BodyPart(object):
         self.encoding = encoding
         headers = {}
         # Split into header section (if any) and the content
-        if b'\r\n\r\n' in content:
+        if content == b'':
+            # bypass the case when body is missing
+            self.content = content
+            headers = _header_parser(content, encoding)
+        elif b'\r\n\r\n' in content:
             first, self.content = _split_on_find(content, b'\r\n\r\n')
             if first != b'':
                 headers = _header_parser(first.lstrip(), encoding)
